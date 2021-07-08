@@ -30,7 +30,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "../lireddit/src/utils/sleep.ts", "../lireddit/src/resolvers/isServer.ts"  ],
   "exclude": [
     "node_modules"
   ]
