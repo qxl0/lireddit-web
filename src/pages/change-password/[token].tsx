@@ -5,7 +5,7 @@ import { withUrqlClient } from 'next-urql';
 import router, { useRouter } from 'next/dist/client/router';
 import React, { useState } from 'react'
 import { InputField } from '../../components/InputField';
-import { Wrapper } from '../../components/wrapper';
+import { Wrapper } from '../../components/Wrapper';
 import { useChangePasswordMutation } from '../../generated/graphql';
 import { createUrqlClient } from '../../utils/createUrqlClient';
 import { toErrorMap } from '../../utils/toErrorMap';
