@@ -237,7 +237,7 @@ export type PostsQuery = (
     & Pick<PaginatedPosts, 'hasMore'>
     & { posts: Array<(
       { __typename?: 'Post' }
-      & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'text'>
+      & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'textSnippet'>
     )> }
   ) }
 );
@@ -336,7 +336,7 @@ export const PostsDocument = gql`
       createdAt
       updatedAt
       title
-      text
+      textSnippet
     }
   }
 }
