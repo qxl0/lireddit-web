@@ -1,26 +1,32 @@
 import { Box, Flex, Heading, Link, Stack, Text } from "@chakra-ui/layout";
-import { Button, IconButton } from "@chakra-ui/react"
+import { Button } from "@chakra-ui/react";
 import { withUrqlClient } from "next-urql";
-import React from "react"
-import { useDeletePostMutation, usePostsQuery } from "../generated/graphql";
-import { createUrqlClient } from "../utils/createUrqlClient";
 import NextLink from "next/link";
+import React from "react";
+import { EditDeletePostButtons } from "../components/EditDeletePostButtons";
 import { Layout } from "../components/Layout";
 import { UpdootSection } from "../components/UpdootSection";
-import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import {
+  useDeletePostMutation,
+  useMeQuery,
+  usePostsQuery,
+} from "../generated/graphql";
+import { createUrqlClient } from "../utils/createUrqlClient";
 
 const Index = () => {
-  const [ variables, setVariables] = React.useState({limit:10,cursor:null as string | null});
-    const [{data, fetching }] = usePostsQuery({
-        variables,
-    });
+  const [variables, setVariables] = React.useState({
+    limit: 10,
+    cursor: null as string | null,
+  });
+  const [{ data, fetching }] = usePostsQuery({
+    variables,
+  });
   const [, deletePost] = useDeletePostMutation();
 
-    console.log(variables);
-    if (!fetching && !data){
-      return  <div>There's no data</div>
-    }
-    return (
+  if (!fetching && !data) {
+    return <div>There's no data</div>;
+  }
+  return (
     <Layout>
       {!data && fetching ? (
         <div>loading...</div>
@@ -35,32 +41,14 @@ const Index = () => {
                     <Link>
                       <Heading fontSize="xl">{p.title}</Heading>
                     </Link>
-                    </NextLink>
+                  </NextLink>
                   <Text>posted by {p.creator.username}</Text>
                   <Flex align="center">
                     <Text flex={1} mt={4}>
                       {p.textSnippet}
                     </Text>
                     <Box ml="auto">
-                      <NextLink href="/post/edit/[id]" as={`/post/edit/${p.id}`}>
-                      <IconButton
-                      mr="4"
-                      variantColor="red"
-                      icon={<EditIcon />}
-                      aria-label="Edit Post"
-                      onClick={() => {
-                      }}
-                    />
-                    </NextLink>
-                    <IconButton
-                      ml="auto"
-                      variantColor="red"
-                      icon={<DeleteIcon />}
-                      aria-label="Delete Post"
-                      onClick={() => {
-                        deletePost({ id: p.id });
-                      }}
-                    />
+                      <EditDeletePostButtons id={p.id} creatorId={p.creator.id}/>
                     </Box>
                   </Flex>
                 </Box>
@@ -74,14 +62,20 @@ const Index = () => {
           <Button
             onClick={() => {
               setVariables({
-              limit: variables.limit,
-              cursor: data.posts.posts[data.posts.posts.length - 1].createdAt
-            })}}
-            isLoading={fetching} m="auto" my="8">Load more</Button>
-         </Flex>
-         ): null }
+                limit: variables.limit,
+                cursor: data.posts.posts[data.posts.posts.length - 1].createdAt,
+              });
+            }}
+            isLoading={fetching}
+            m="auto"
+            my="8"
+          >
+            Load more
+          </Button>
+        </Flex>
+      ) : null}
     </Layout>
-    )   
+  );
 };
 
-export default withUrqlClient(createUrqlClient, {ssr: true})(Index);
+export default withUrqlClient(createUrqlClient, { ssr: true })(Index);
