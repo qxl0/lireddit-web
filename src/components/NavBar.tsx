@@ -34,7 +34,9 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
         body = (
             <Flex align="center">
               <NextLink href="/create-post">
-                <Button as={Link} mr={2}>create post  </Button>
+                <Button as={Link} mr={4}>
+			create post  
+		</Button>
               </NextLink>
                 <Box mr={2}>{data.me.username}</Box>
                 <Button 
@@ -42,21 +44,22 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
                         logout();
                     }}
                     isLoading={logoutFetching}
-                    variant="link">logout</Button>
+                    variant="link"
+		>
+			logout
+		</Button>
             </Flex>
         );
     }
         return (
           <Flex zIndex={1} position="sticky" top={0} bg="tan" p={4}>
-            <Flex  flex={1} margin="auto" maxW={800}>
+            <Flex  flex={1} m="auto" maxW={800}>
               <NextLink href="/">
                 <Link>
                 <Heading>LiReddit</Heading>
                 </Link>
               </NextLink>
-              <Box ml={"auto"}>
-                    {body}
-                </Box>
+              <Box ml={"auto"}>{body}</Box>
             </Flex>
             </Flex>
         );
