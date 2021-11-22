@@ -18,13 +18,18 @@ const Index = () => {
     limit: 10,
     cursor: null as string | null,
   });
-  const [{ data, fetching }] = usePostsQuery({
+  const [{ data, error, fetching }] = usePostsQuery({
     variables,
   });
   const [, deletePost] = useDeletePostMutation();
 
   if (!fetching && !data) {
-    return <div>There's no data</div>;
+    return (
+      <div>
+        <div>you got query failed for some reason</div>
+        <div>{error?.message}</div>
+      </div>
+    );
   }
   return (
     <Layout>
