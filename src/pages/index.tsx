@@ -1,18 +1,20 @@
 import { Box, Flex, Heading, Link, Stack, Text } from "@chakra-ui/layout";
-import { Button } from "@chakra-ui/react"
+import { Button, IconButton } from "@chakra-ui/react"
 import { withUrqlClient } from "next-urql";
 import React from "react"
-import { usePostsQuery } from "../generated/graphql";
+import { useDeletePostMutation, usePostsQuery } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import NextLink from "next/link";
 import { Layout } from "../components/Layout";
 import { UpdootSection } from "../components/UpdootSection";
+import { DeleteIcon } from "@chakra-ui/icons";
 
 const Index = () => {
   const [ variables, setVariables] = React.useState({limit:10,cursor:null as string | null});
     const [{data, fetching }] = usePostsQuery({
         variables,
     });
+  const [, deletePost] = useDeletePostMutation();
 
     console.log(variables);
     if (!fetching && !data){
@@ -20,32 +22,45 @@ const Index = () => {
     }
     return (
     <Layout>
-     
-        <br></br>
-        {!data && fetching ? (
-         <div>loading...</div>
-         ): (
-           <Stack spacing={8}>
-             {data!.posts.posts.map(p => (
-                <Flex p={5} shadow="md" borderWidth="1px">
-                  <UpdootSection post={p} />
-                  <Box>
-                    <NextLink href="/post/[id]" as={`/post/${p.id}`}>
+      {!data && fetching ? (
+        <div>loading...</div>
+      ) : (
+        <Stack spacing={8}>
+          {data!.posts.posts.map((p) =>
+            !p ? null : (
+              <Flex key={p.id} p={5} shadow="md" borderWidth="1px">
+                <UpdootSection post={p} />
+                <Box flex={1}>
+                  <NextLink href="/post/[id]" as={`/post/${p.id}`}>
                     <Link>
                       <Heading fontSize="xl">{p.title}</Heading>
                     </Link>
                     </NextLink>
                   <Text>posted by {p.creator.username}</Text>
-                  <Text mt={4}>{p.textSnippet}</Text>
-                  </Box>
-                </Flex>
-             ))}
-           </Stack>
-         )}
-         { data && data.posts.hasMore? (<Flex>
-          <Button 
-            onClick={() => { 
-              console.log("clicked: load more");
+                  <Flex align="center">
+                    <Text flex={1} mt={4}>
+                      {p.textSnippet}
+                    </Text>
+                    <IconButton
+                      ml="auto"
+                      variantColor="red"
+                      icon={<DeleteIcon />}
+                      aria-label="Delete Post"
+                      onClick={() => {
+                        deletePost({ id: p.id });
+                      }}
+                    />
+                  </Flex>
+                </Box>
+              </Flex>
+            )
+          )}
+        </Stack>
+      )}
+      {data && data.posts.hasMore ? (
+        <Flex>
+          <Button
+            onClick={() => {
               setVariables({
               limit: variables.limit,
               cursor: data.posts.posts[data.posts.posts.length - 1].createdAt
